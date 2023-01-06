@@ -10,10 +10,8 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 //import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.MecanumDrivetrain;
-import com.kauailabs.navx.frc.AHRS;
 
 
 public class DriveMecanum extends CommandBase {
@@ -23,11 +21,9 @@ public class DriveMecanum extends CommandBase {
 
   private MecanumDrivetrain m_drivetrain;
   private Supplier<Double> m_r, m_x, m_y, m_z;
-  private XboxController m_xbox;
-  private AHRS ahrs;
 
   public DriveMecanum(MecanumDrivetrain drivetrain, Supplier<Double> forward, Supplier<Double> strafe, Supplier<Double> zRotation,
-   Supplier<Double> rAngle, XboxController xbox) {
+   Supplier<Double> rAngle) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
     this.m_drivetrain = drivetrain;
@@ -35,7 +31,6 @@ public class DriveMecanum extends CommandBase {
     this.m_y = strafe;
     this.m_z = zRotation;
     this.m_r = rAngle;
-    this.m_xbox = xbox;
   }
 
 // Called when the command is initially scheduled.
@@ -50,13 +45,7 @@ public class DriveMecanum extends CommandBase {
     double ySpeed = -m_y.get();
     double zRotation = m_z.get();
     double gyroAngle = m_r.get();
-
       
-    if (m_xbox.getBButton() == true) {
-     ahrs.zeroYaw();
-    }
-      
-
     m_drivetrain.driveCartesian(xSpeed, ySpeed, zRotation, gyroAngle);
 
   }

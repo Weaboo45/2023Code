@@ -33,8 +33,8 @@ public final class Constants {
         public static int rightFrontTalonID = SpeedControllerCanPortConstants.driveFrontRightTalon;
         public static int rightRearVictorID = SpeedControllerCanPortConstants.driveRearRightVictor;
 
-        public static double rotationDeadband = .25 ; //3
-        public static double strafingDeadband = .75;
+        public static double rotationDeadband = .25 ;
+        public static double strafingDeadband = .25;  //.75
         public static double speedDeadband = 0.25;
         public static double m_maxOutput = .75;
         public static boolean isTankDriveSquared = false;

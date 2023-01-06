@@ -66,7 +66,7 @@ public class RobotContainer {
    //   () -> m_xbox.getLeftTriggerAxis() - m_xbox.getRightTriggerAxis(), () -> m_xbox.getLeftX());
       
   private final DriveMecanum m_fieldDrive = new DriveMecanum(m_mMecanumDrivetrain, () -> m_xbox.getLeftY(), ()-> m_xbox.getLeftX(),
-      ()-> -m_xbox.getRightX(), ()-> ahrs.getAngle(), m_xbox);
+      ()-> -m_xbox.getRightX(), ()-> ahrs.getAngle());
 
 
   /*
@@ -110,12 +110,15 @@ public class RobotContainer {
     drivingStyleLayout.add("Gyro Reset",
     new InstantCommand(()-> ahrs.zeroYaw()));
 
+    drivingStyleLayout.add("Gyro Calibrate",
+    new InstantCommand(()-> ahrs.calibrate()));
+
 
     ShuffleboardLayout mecanumSensor = m_tab.getLayout("Mecanum Sensors", BuiltInLayouts.kGrid)
-    .withPosition(6, 0).withSize(3, 3)
+    .withPosition(6, 0).withSize(2, 2)
     .withProperties(Map.of("lable psition", "BOTTOM"));
     mecanumSensor.addNumber("Gyro", ()-> ahrs.getAngle())
-    .withPosition(0, 0).withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar);
+    .withPosition(0, 0).withSize(1, 1).withWidget(BuiltInWidgets.kDial);
 
 
     ShuffleboardLayout controllerLayout = m_tab.getLayout("xbox", BuiltInLayouts.kGrid)

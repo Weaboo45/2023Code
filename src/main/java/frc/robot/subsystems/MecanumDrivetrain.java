@@ -114,7 +114,7 @@ public class MecanumDrivetrain extends SubsystemBase {
     xSpeed = MathUtil.applyDeadband(xSpeed, speedDeadband);
     ySpeed = MathUtil.applyDeadband(ySpeed, speedDeadband);
     zRotation = MathUtil.applyDeadband(zRotation, rotationDeadband);
-    gyroAngle = m_ahrs.getAngle();
+    //gyroAngle = m_ahrs.getAngle();
 
     var speeds = MecanumDrive.driveCartesianIK(xSpeed, ySpeed, zRotation, gyroAngle);
 
