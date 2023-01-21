@@ -1,0 +1,14 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Competition Robot/Auto Chooser": "String Chooser",
+      "/Shuffleboard/Competition Robot/Drivetrain Data/Mecanum Drive Base": "MecanumDrive",
+      "/Shuffleboard/Competition Robot/Drivetrain Data/MecanumDrivetrain": "Subsystem",
+      "/Shuffleboard/Competition Robot/driving styles/Gyro Calibrate": "Command",
+      "/Shuffleboard/Competition Robot/driving styles/Gyro Reset": "Command",
+      "/Shuffleboard/Competition Robot/driving styles/Joystick Mecanum Drive": "Command",
+      "/Shuffleboard/Competition Robot/driving styles/Xbox Mecanum Drive": "Command"
+    }
+  }
+}
