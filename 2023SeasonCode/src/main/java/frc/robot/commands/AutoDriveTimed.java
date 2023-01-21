@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
@@ -9,13 +10,14 @@ public class AutoDriveTimed extends CommandBase {
 
   private MecanumDrivetrain m_drivetrain;
   private Timer m_timer;
-  private double m_speed, m_endTime, m_speed2, m_zRotation, m_gyroAngle;
+  private double m_speed, m_endTime, m_speed2, m_zRotation;
+  private Rotation2d m_gyroAngle;
 
   /**
    * Creates a new AutoDriveTimed. double m_shotSpeed,
    */
   public AutoDriveTimed(MecanumDrivetrain drivetrain, double speed, double speed2, double zRotation,
-   double gyroAngle, double endTime) {
+   Rotation2d gyroAngle, double endTime) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
     m_drivetrain = drivetrain;
@@ -46,7 +48,7 @@ public class AutoDriveTimed extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_drivetrain.driveCartesian(0, 0, 0, 0);
+    m_drivetrain.driveCartesian(0, 0, 0, null);
   }
 
   // Returns true when the command should end.

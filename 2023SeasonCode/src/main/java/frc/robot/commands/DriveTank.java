@@ -9,31 +9,26 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
-//import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.MecanumDrivetrain;
 
-
-public class DriveMecanum extends CommandBase {
-  /*
-   * Creates a new DriveMecanum.
+public class DriveTank extends CommandBase {
+  /**
+   * Creates a new DriveTank.
    */
 
-  private MecanumDrivetrain m_drivetrain;
-  private Supplier<Double> m_r, m_x, m_y, m_z;
+  private MecanumDrivetrain drivetrain;
+  private Supplier<Double> m_left, m_right;
 
-  public DriveMecanum(MecanumDrivetrain drivetrain, Supplier<Double> forward, Supplier<Double> strafe, Supplier<Double> zRotation,
-   Supplier<Double> rAngle) {
+  public DriveTank(MecanumDrivetrain drive, Supplier<Double> left, Supplier<Double> right) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(drivetrain);
-    this.m_drivetrain = drivetrain;
-    this.m_x = forward;
-    this.m_y = strafe;
-    this.m_z = zRotation;
-    this.m_r = rAngle;
+    addRequirements(drive);
+    drivetrain = drive;
+    m_left = left;
+    m_right = right;
   }
 
-// Called when the command is initially scheduled.
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
   }
@@ -41,19 +36,15 @@ public class DriveMecanum extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double xSpeed = m_x.get();
-    double ySpeed = -m_y.get();
-    double zRotation = m_z.get();
-    double gyroAngle = m_r.get();
-      
-    m_drivetrain.driveCartesian(xSpeed, ySpeed, zRotation, gyroAngle);
-
+    double left = m_left.get();
+    double right = m_right.get();
+    drivetrain.tankDrive(left, right);  // null issue
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_drivetrain.driveCartesian(0.0, 0.0, 0.0, 0.0);	
+    drivetrain.tankDrive(0, 0);
   }
 
   // Returns true when the command should end.

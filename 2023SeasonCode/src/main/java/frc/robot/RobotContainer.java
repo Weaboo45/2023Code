@@ -49,24 +49,24 @@ public class RobotContainer {
   private final SendableChooser<Command> m_chooser = new SendableChooser<Command>();
   
   /// SUBSYSTEMS ///
-  private final MecanumDrivetrain m_mMecanumDrivetrain = new MecanumDrivetrain(m_tab);
+  private final MecanumDrivetrain mecanumDrivetrain = new MecanumDrivetrain(m_tab);
   private static final AHRS ahrs = new AHRS(SPI.Port.kMXP);
 
   /// CONTROLLERS & BUTTONS ///
   private final XboxController m_xbox = new XboxController(0);
 
   /// COMMANDS ///
-  private final AutoDriveTimed m_autoDriveTimedForward = new AutoDriveTimed( m_mMecanumDrivetrain, 0.5, 0.5 , 6.5, 0.0, 0.0);
+  private final AutoDriveTimed m_autoDriveTimedForward = new AutoDriveTimed(mecanumDrivetrain,
+   0.5, 0.5 , 6.5, ahrs.getRotation2d(), 0.0);
+   
   //private f qal AutoDriveTimed m_autoDriveTimedReverse = new AutoDriveTimed( m_drivetrain, -0.5, -0.5, 1.0);
   
-  //private final DriveTank m_driveTank = new DriveTank(m_drivetrain, () -> -m_xbox.getLeftY(),
-  //    () -> -m_xbox.getRightY());
+  private final DriveTank driveTank = new DriveTank(mecanumDrivetrain, () -> -m_xbox.getLeftY(),
+   () -> m_xbox.getRightY());
 
- // private final DriveCheesy m_driveCheesyTriggers = new DriveCheesy(m_drivetrain,
-   //   () -> m_xbox.getLeftTriggerAxis() - m_xbox.getRightTriggerAxis(), () -> m_xbox.getLeftX());
       
-  private final DriveMecanum m_fieldDrive = new DriveMecanum(m_mMecanumDrivetrain, () -> m_xbox.getLeftY(), ()-> m_xbox.getLeftX(),
-      ()-> -m_xbox.getRightX(), ()-> ahrs.getAngle());
+  private final DriveMecanum fieldDriveXbox = new DriveMecanum(mecanumDrivetrain, () -> m_xbox.getLeftY(), ()-> m_xbox.getLeftX(),
+      ()-> -m_xbox.getRightX(), ()-> ahrs.getRotation2d());
 
 
   /*
@@ -98,14 +98,11 @@ public class RobotContainer {
     .withPosition(0, 0).withSize(2, 6)
     .withProperties(Map.of("label position", "BOTTOM"));
     
-    //drivingStyleLayout.add("Tank drive",
-    //new InstantCommand(() -> m_drivetrain.setDefaultCommand(m_driveTank), m_drivetrain));
+    drivingStyleLayout.add("Tank drive",
+    new InstantCommand(() -> mecanumDrivetrain.setDefaultCommand(driveTank), mecanumDrivetrain));
 
-    //drivingStyleLayout.add("Cheesy Drive with Triggers",
-    //new InstantCommand(() -> m_drivetrain.setDefaultCommand(m_driveCheesyTriggers), m_drivetrain));
-
-    drivingStyleLayout.add("Mecanum Drive",
-    new InstantCommand(() -> m_mMecanumDrivetrain.setDefaultCommand(m_fieldDrive), m_mMecanumDrivetrain));
+    drivingStyleLayout.add("Xbox Field Drive",
+    new InstantCommand(() -> mecanumDrivetrain.setDefaultCommand(fieldDriveXbox), mecanumDrivetrain));
 
     drivingStyleLayout.add("Gyro Reset",
     new InstantCommand(()-> ahrs.zeroYaw()));
@@ -147,7 +144,7 @@ public class RobotContainer {
    * Default commands are ran whenever no other commands are using a specific subsystem.
    */
   private void configureInitialDefaultCommands() {
-    m_mMecanumDrivetrain.setDefaultCommand(m_fieldDrive);
+    mecanumDrivetrain.setDefaultCommand(driveTank);
   }
   
   /**
@@ -171,6 +168,6 @@ public class RobotContainer {
   }
 
   public void displayValues() {
-  SmartDashboard.putData(m_mMecanumDrivetrain);
+  SmartDashboard.putData(mecanumDrivetrain);
   }
 }
