@@ -10,17 +10,17 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.MecanumDrivetrain;
+import frc.robot.subsystems.Drivetrain;
 
 public class DriveTank extends CommandBase {
   /**
    * Creates a new DriveTank.
    */
 
-  private MecanumDrivetrain drivetrain;
+  private Drivetrain drivetrain;
   private Supplier<Double> m_left, m_right;
 
-  public DriveTank(MecanumDrivetrain drive, Supplier<Double> left, Supplier<Double> right) {
+  public DriveTank(Drivetrain drive, Supplier<Double> left, Supplier<Double> right) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
     drivetrain = drive;

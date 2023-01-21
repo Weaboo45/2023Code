@@ -19,19 +19,19 @@ public class DriveMecanum extends CommandBase {
    * Creates a new DriveMecanum.
    */
 
-  private MecanumDrivetrain m_drivetrain;
-  private Supplier<Double>  m_x, m_y, m_z;
-  private Supplier<Rotation2d> m_r;
+  private MecanumDrivetrain drivetrain;
+  private Supplier<Double>  x, y, z;
+  private Supplier<Rotation2d> r;
 
   public DriveMecanum(MecanumDrivetrain drivetrain, Supplier<Double> forward, Supplier<Double> strafe, Supplier<Double> zRotation,
    Supplier<Rotation2d> rAngle) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
-    this.m_drivetrain = drivetrain;
-    this.m_x = forward;
-    this.m_y = strafe;
-    this.m_z = zRotation;
-    this.m_r = rAngle;
+    this.drivetrain = drivetrain;
+    this.x = forward;
+    this.y = strafe;
+    this.z = zRotation;
+    this.r = rAngle;
   }
 
 // Called when the command is initially scheduled.
@@ -42,19 +42,18 @@ public class DriveMecanum extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double xSpeed = m_x.get();
-    double ySpeed = -m_y.get();
-    double zRotation = m_z.get();
-    Rotation2d gyroAngle = m_r.get();
+    double xSpeed = x.get();
+    double ySpeed = -y.get();
+    double zRotation = z.get();
+    Rotation2d gyroAngle = r.get();
       
-    m_drivetrain.driveCartesian(xSpeed, ySpeed, zRotation, gyroAngle);
-
+    drivetrain.driveCartesian(xSpeed, ySpeed, zRotation, gyroAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_drivetrain.driveCartesian(0.0, 0.0, 0.0, null);	
+    drivetrain.driveCartesian(0.0, 0.0, 0.0, null);	
   }
 
   // Returns true when the command should end.

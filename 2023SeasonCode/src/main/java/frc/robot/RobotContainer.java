@@ -17,6 +17,7 @@ import java.util.Map;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -31,6 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.*;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.MecanumDrivetrain;
 
 /**
@@ -41,47 +43,44 @@ import frc.robot.subsystems.MecanumDrivetrain;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  /// SHUFFEBOARD TAB ///
-  // This object is where we will put the data we want to see on the shuffleboard
-  // when the robot is running
-  private final ShuffleboardTab m_tab = Shuffleboard.getTab("Competition Robot");
-  private final SendableChooser<Command> m_chooser = new SendableChooser<Command>();
-  
-  /// SUBSYSTEMS ///
-  private final MecanumDrivetrain mecanumDrivetrain = new MecanumDrivetrain(m_tab);
-  private static final AHRS ahrs = new AHRS(SPI.Port.kMXP);
-
-  /// CONTROLLERS & BUTTONS ///
-  private final XboxController m_xbox = new XboxController(0);
-
-  /// COMMANDS ///
-  private final AutoDriveTimed m_autoDriveTimedForward = new AutoDriveTimed(mecanumDrivetrain,
-   0.5, 0.5 , 6.5, ahrs.getRotation2d(), 0.0);
-   
-  //private f qal AutoDriveTimed m_autoDriveTimedReverse = new AutoDriveTimed( m_drivetrain, -0.5, -0.5, 1.0);
-  
-  private final DriveTank driveTank = new DriveTank(mecanumDrivetrain, () -> -m_xbox.getLeftY(),
-   () -> m_xbox.getRightY());
-
-      
-  private final DriveMecanum fieldDriveXbox = new DriveMecanum(mecanumDrivetrain, () -> m_xbox.getLeftY(), ()-> m_xbox.getLeftX(),
-      ()-> -m_xbox.getRightX(), ()-> ahrs.getRotation2d());
-
-
   /*
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configure the initial default commands
     configureInitialDefaultCommands();
-    // Configure the button bindings
     configureButtonBindings();
-    // Configure the Shuffleboard Command Buttons
     configureShuffleboardData();
-    
   }
 
+  // The robot's subsystems and commands are defined here...
+  /// SHUFFLEBOARD TAB ///
+  private final ShuffleboardTab m_tab = Shuffleboard.getTab("Competition Robot");
+  private final SendableChooser<Command> m_chooser = new SendableChooser<Command>();
+  
+
+  /// SUBSYSTEMS ///
+  private final MecanumDrivetrain mecanumDrivetrain = new MecanumDrivetrain(m_tab);
+  private final Drivetrain drivetrain = new Drivetrain(m_tab);
+  private static final AHRS ahrs = new AHRS(SPI.Port.kMXP);
+
+
+  /// OI DEVICES ///
+  private final XboxController xbox = new XboxController(0);
+  private final Joystick stick = new Joystick(0);
+
+
+  /// COMMANDS ///
+  private final AutoDriveTimed m_autoDriveTimedForward = new AutoDriveTimed(mecanumDrivetrain,
+   0.5, 0.5 , 6.5, ahrs.getRotation2d(), 0.0);
+  private final DriveTank driveTank = new DriveTank(drivetrain, () -> xbox.getLeftY(), () -> xbox.getRightY());
+  private final DriveMecanum fieldDriveXbox = new DriveMecanum(mecanumDrivetrain, () -> xbox.getLeftY(), ()-> xbox.getLeftX(),
+      ()-> xbox.getRightX(), ()-> ahrs.getRotation2d());
+  private final DriveMecanum fieldDriveJoystick = new DriveMecanum(mecanumDrivetrain, () -> stick.getX(), ()-> stick.getY(),
+      ()-> stick.getTwist(), ()-> ahrs.getRotation2d());
+
+
+  
+  /// SHUFFLEBOARD METHODS ///
   /**
    * Use this command to define {@link Shuffleboard} buttons using a
    * {@link ShuffleboardTab} and its add() function. You can put already defined
@@ -98,18 +97,14 @@ public class RobotContainer {
     .withPosition(0, 0).withSize(2, 6)
     .withProperties(Map.of("label position", "BOTTOM"));
     
-    drivingStyleLayout.add("Tank drive",
-    new InstantCommand(() -> mecanumDrivetrain.setDefaultCommand(driveTank), mecanumDrivetrain));
-
+    drivingStyleLayout.add("Joystick Field Drive",
+    new InstantCommand(() -> mecanumDrivetrain.setDefaultCommand(fieldDriveJoystick), mecanumDrivetrain));
     drivingStyleLayout.add("Xbox Field Drive",
     new InstantCommand(() -> mecanumDrivetrain.setDefaultCommand(fieldDriveXbox), mecanumDrivetrain));
-
     drivingStyleLayout.add("Gyro Reset",
     new InstantCommand(()-> ahrs.zeroYaw()));
-
     drivingStyleLayout.add("Gyro Calibrate",
     new InstantCommand(()-> ahrs.calibrate()));
-
 
     ShuffleboardLayout mecanumSensor = m_tab.getLayout("Mecanum Sensors", BuiltInLayouts.kGrid)
     .withPosition(6, 0).withSize(2, 2)
@@ -117,36 +112,33 @@ public class RobotContainer {
     mecanumSensor.addNumber("Gyro", ()-> ahrs.getAngle())
     .withPosition(0, 0).withSize(1, 1).withWidget(BuiltInWidgets.kDial);
 
-
     ShuffleboardLayout controllerLayout = m_tab.getLayout("xbox", BuiltInLayouts.kGrid)
     .withPosition(3, 0).withSize(2, 6)
     .withProperties(Map.of("label position", "BOTTOM"));
-    controllerLayout.addNumber("left y", () -> -m_xbox.getLeftY())
+    controllerLayout.addNumber("left y", () -> -xbox.getLeftY())
     .withPosition(0, 0).withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar);
-    controllerLayout.addNumber("left x", () -> m_xbox.getLeftX())
+    controllerLayout.addNumber("left x", () -> xbox.getLeftX())
     .withPosition(0, 1).withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar);
-    controllerLayout.addNumber("left trigger", () -> m_xbox.getLeftTriggerAxis())
+    controllerLayout.addNumber("left trigger", () -> xbox.getLeftTriggerAxis())
     .withPosition(0, 2).withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar);
-    controllerLayout.addNumber("right y", () -> -m_xbox.getRightY())
+    controllerLayout.addNumber("right y", () -> -xbox.getRightY())
     .withPosition(2, 0).withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar);
-    controllerLayout.addNumber("right x", () -> m_xbox.getRightX())
+    controllerLayout.addNumber("right x", () -> xbox.getRightX())
     .withPosition(2, 1).withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar);
-    controllerLayout.addNumber("right trigger", () -> m_xbox.getRightTriggerAxis())
+    controllerLayout.addNumber("right trigger", () -> xbox.getRightTriggerAxis())
     .withPosition(2, 2).withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar);
 
     m_tab.add("Auto Chooser", m_chooser)
     .withPosition(0, 6).withSize(5, 2)
     .withWidget(BuiltInWidgets.kSplitButtonChooser);   
   }
-  
   /**
    * Use this method to define the default commands of subsystems. 
    * Default commands are ran whenever no other commands are using a specific subsystem.
    */
   private void configureInitialDefaultCommands() {
-    mecanumDrivetrain.setDefaultCommand(driveTank);
+    mecanumDrivetrain.setDefaultCommand(fieldDriveJoystick);
   }
-  
   /**
    * Use this method to define your button->command mappings.  Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -156,7 +148,6 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
   }
-  
   
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
