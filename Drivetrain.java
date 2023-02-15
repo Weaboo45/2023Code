@@ -7,7 +7,7 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.MecanumDrivetrianConstants.*;
+import static frc.robot.Constants.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -22,10 +22,10 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Creates a new Drivetrain.
    */
-  private WPI_TalonSRX m_leftMasterMotor;
+  private WPI_VictorSPX m_leftMasterMotor;
   private WPI_VictorSPX m_leftSlaveMotor;
   private WPI_TalonSRX m_rightMasterMotor;
-  private WPI_VictorSPX m_rightSlaveMotor;
+  private WPI_TalonSRX m_rightSlaveMotor;
   
 
   private DifferentialDrive m_drive;
@@ -33,13 +33,13 @@ public class Drivetrain extends SubsystemBase {
 
   public Drivetrain(ShuffleboardTab tab) {
      //set up drive motors
-    m_leftMasterMotor = new WPI_TalonSRX(leftFrontTalonID);
-    m_leftSlaveMotor = new WPI_VictorSPX(leftRearVictorID);
+    m_leftMasterMotor = new WPI_TalonSRX(FRONT_LEFT_VICTOR_ID);
+    m_leftSlaveMotor = new WPI_VictorSPX(REAR_LEFT_TALON_ID);
     
     m_leftSlaveMotor.follow(m_leftMasterMotor);
 
-    m_rightMasterMotor = new WPI_TalonSRX(rightFrontTalonID);
-    m_rightSlaveMotor = new WPI_VictorSPX(rightRearVictorID);
+    m_rightMasterMotor = new WPI_TalonSRX(FRONT_RIGHT_TALON_ID);
+    m_rightSlaveMotor = new WPI_VictorSPX(REAR_RIGHT_TALON_ID);
 
     m_rightMasterMotor.setInverted(true);
     m_rightSlaveMotor.setInverted(true);
@@ -92,36 +92,36 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void tankDrive(double left, double right) {
-    m_drive.tankDrive(left, right, isTankDriveSquared);
+    m_drive.tankDrive(left, right, IS_TANKDRIVE_SQUARED);
   }
 
   public void arcadeDrive(double speed, double rotation) {
 
-    speed = (Math.abs(speed) < speedDeadband)?
+    speed = (Math.abs(speed) < SPEED_DEADBAND)?
             0 : (speed < 0)?
-                (speed + speedDeadband) / (1 - speedDeadband):
-                (speed - speedDeadband) / (1 - speedDeadband);
+                (speed + SPEED_DEADBAND) / (1 - SPEED_DEADBAND):
+                (speed - SPEED_DEADBAND) / (1 - SPEED_DEADBAND);
     
-    rotation = (Math.abs(rotation) < rotationDeadband)?
+    rotation = (Math.abs(rotation) < ROTATION_DEADBAND)?
                0 : (rotation < 0)?
-                   (rotation + rotationDeadband) / (1 - rotationDeadband):
-                   (rotation - rotationDeadband) / (1 -rotationDeadband);
+                   (rotation + ROTATION_DEADBAND) / (1 - ROTATION_DEADBAND):
+                   (rotation - ROTATION_DEADBAND) / (1 -ROTATION_DEADBAND);
 
-    m_drive.arcadeDrive(speed, rotation, isArcadeDriveSquared);
+    m_drive.arcadeDrive(speed, rotation, IS_ARCADEDRIVE_SQUARED);
   }
 
   public void cheesyDrive(double speed, double rotation) {
 
-    speed = (Math.abs(speed) < speedDeadband)?
+    speed = (Math.abs(speed) < SPEED_DEADBAND)?
             0 : (speed < 0)?
-            (speed + speedDeadband) / (1 - speedDeadband):
-            (speed - speedDeadband) / (1 - speedDeadband);
+            (speed + SPEED_DEADBAND) / (1 - SPEED_DEADBAND):
+            (speed - SPEED_DEADBAND) / (1 - SPEED_DEADBAND);
 
-    rotation = (Math.abs(rotation) < rotationDeadband)?
+    rotation = (Math.abs(rotation) < ROTATION_DEADBAND)?
                0 : (rotation < 0)?
-               (rotation + rotationDeadband) / (1 - rotationDeadband):
-               (rotation - rotationDeadband) / (1 - rotationDeadband);
+               (rotation + ROTATION_DEADBAND) / (1 - ROTATION_DEADBAND):
+               (rotation - ROTATION_DEADBAND) / (1 - ROTATION_DEADBAND);
 
-    m_drive.curvatureDrive(speed, rotation, doesCheesyDrivePivot);
+    m_drive.curvatureDrive(speed, rotation, DOES_CHEESYDRIVE_PIVOT);
   }
 }
